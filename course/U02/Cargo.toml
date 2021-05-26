@@ -1,5 +1,5 @@
 [package]
-name = "U02"
+name = "u02"
 version = "0.1.0"
 authors = ["Yiannis Belias <yiannis@adzuna.com>"]
 edition = "2018"
