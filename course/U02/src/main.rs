@@ -1,6 +1,8 @@
 fn main() {
     m2_ownership();
+    m4_borrowing();
     m5_slices();
+    m7_patterns();
 }
 
 fn m2_ownership () {
@@ -17,11 +19,43 @@ fn m2_ownership () {
     println!("One {}, or two {}? That is the question...", singular, plural);
 
     // plural.push('s'); <-- fails
-    // NOTE: plural was created as `mut` inseide the function,
+    // NOTE: plural was created as `mut` inside the function,
     // but was returned as a non-mutable String
 }
 
 fn m4_borrowing () {
+    struct Star {
+        startype: String,
+        radius: f64,
+    }
+
+    impl Star {
+        fn new(t: &str, r: f64 ) -> Self {
+            Star {
+                startype : String::from( t ),
+                radius   : r,
+            }
+        }
+        fn explode(&mut self) {
+            self.startype = String::from("White Dwarf");
+            self.radius = 1.0;
+        }
+        fn to_black_hole(self) {
+        }
+    }
+
+    let mut albireo = Star::new("White giand", 100.0);
+    let mut sun     = Star::new("Yellow normal", 10.0);
+
+    albireo.explode();
+    sun.explode();
+
+    println!("Sun is now just {} wide", 2.0*sun.radius);
+
+    albireo.to_black_hole();
+
+    // The below fails, as after the function above the Star has disappeared from the known universe
+    // println!("Albireo is now a black hole with radius: {}",albireo.radius);
 }
 
 
@@ -58,6 +92,9 @@ fn m5_slices() {
     vm.pop();
     //println!("The last element of the slice is: {}", s_vm[3]); // Fails at compile time!
 
+    let v_0 = v.first().unwrap();
+    println!("The first element of the vector is: {}", v_0 );
+
     let a_slice_literal = "Hello";
     let a_string = String::from("Hello");
     let a_string_slice = &a_string[..];
@@ -67,4 +104,20 @@ fn m5_slices() {
 
     print_0( a_slice_literal );
     print_1( a_slice_literal );
+}
+
+fn m7_patterns() {
+    use std::collections::HashMap;
+
+    let text = "hello hello hello world";
+
+    let mut freqs = HashMap::new();
+    for word in text.split_whitespace() {
+        match freqs.get_mut( word ) {
+            Some(value) => { *value += 1; },
+            None => { freqs.insert( word, 1 ); },
+        }
+    }
+
+    println!("Found `{}` times `hello`", freqs.get("hello").unwrap());
 }
